@@ -1,0 +1,131 @@
+<.header>
+  New Order
+</.header>
+
+<%= if @order_details_submitted do %>
+     <div class="">
+       <div class="">
+         <p>Item Name: <%= @order_changeset.changes.item_name %></p>
+       </div>
+       <div class="">
+         <p>Documents URL: <%= @order_changeset.changes.documents_url %></p>
+       </div>
+       <div class="">
+         <p>Total Quantity: <%= @order_changeset.changes.total_qty %></p>
+       </div>
+     </div>
+
+    <hr class="my-4" />
+<% end %>
+
+<%= if @initiator_submitted do %>
+     <div class="">
+       <div class="">
+         <p>Initiator Name: <%= @initiator_changeset.changes.name %></p>
+       </div>
+       <div class="">
+         <p>Initiator Email: <%= @initiator_changeset.changes.email %></p>
+       </div>
+     </div>
+
+    <hr class="my-4" />
+<% end %>
+
+<%= if @quality_inspector_submitted do %>
+     <div class="">
+       <div class="">
+         <p>Quality Inspector Name: <%= @quality_inspector_changeset.changes.name %></p>
+       </div>
+       <div class="">
+         <p>Quality Inspector Email: <%= @quality_inspector_changeset.changes.email %></p>
+       </div>
+     </div>
+
+    <hr class="my-4" />
+<% end %>
+
+<%= if @manufacturers != [] do %>
+    <div class="manufacturers-list">
+        <h2>Manufacturers</h2>
+        <ul>
+            <%= for manufacturer <- @manufacturers do %>
+                <li>
+                    <p>Manufacturer Name: <%= manufacturer.changes.name %></p>
+                    <p>Manufacturer Email: <%= manufacturer.changes.email %></p>
+                    <p>Quantity: <%= manufacturer.changes.quantity %></p>
+                </li>
+            <% end %>
+        </ul>
+    </div>
+<% end %>
+
+
+<%= if @step == "order" do %>
+    <.simple_form for={@order_form} phx-change="validate_order" phx-submit="save_order">
+        <%#
+        <.input field={@order_form[:item_name]} type="text" label="Item name" value="Flange Manifold Gasket" />
+        <.input field={@order_form[:documents_url]} type="text" label="Documents url" value="https://wardeh.com/flange-manifold-gasket" />
+        <.input field={@order_form[:total_qty]} type="number" label="Total qty" value="30" />
+        %>
+        <.input field={@order_form[:item_name]} type="text" label="Item name" />
+        <.input field={@order_form[:documents_url]} type="text" label="Documents url" />
+        <.input field={@order_form[:total_qty]} type="number" label="Total qty" />
+        <:actions>
+            <.button phx-disable-with="Saving...">Save Item Details</.button>
+        </:actions>
+    </.simple_form>
+<% end %>
+
+<%= if @step == "initiator" do %>
+    <.simple_form for={@initiator_form} phx-change="validate_initiator" phx-submit="save_initiator">
+        <%#
+        <.input field={@initiator_form[:name]} type="text" label="Initiator name" value="Buyer" />
+        <.input field={@initiator_form[:email]} type="email" label="Initiator email" value="max+buyer@wardeh.org" />
+        %>
+        <.input field={@initiator_form[:name]} type="text" label="Initiator name" />
+        <.input field={@initiator_form[:email]} type="email" label="Initiator email" />
+        <:actions>
+            <.button phx-disable-with="Saving...">Save Initiator Details</.button>
+        </:actions>
+    </.simple_form>
+<% end %>
+
+<%= if @step == "quality_inspector" do %>
+    <.simple_form for={@quality_inspector_form} phx-change="validate_quality_inspector" phx-submit="save_quality_inspector">
+        <%#
+        <.input field={@quality_inspector_form[:name]} type="text" label="Quality Inspector Name" value="QA Ltd" />
+        <.input field={@quality_inspector_form[:email]} type="email" label="Quality Inspector Email" value="max+qa@wardeh.org" />
+        %>
+        <.input field={@quality_inspector_form[:name]} type="text" label="Quality Inspector Name" />
+        <.input field={@quality_inspector_form[:email]} type="email" label="Quality Inspector Email" />
+        <:actions>
+            <.button phx-disable-with="Saving...">Save Quality Inspector Details</.button>
+        </:actions>
+    </.simple_form>
+<% end %>
+
+<%= if @step == "manufacturer" && @add_manufacturer do %>
+    <%= @order_changeset.changes.total_qty - @quantity_assigned %> items to be assigned for manufacture
+    <.simple_form for={@manufacturer_form} phx-change="validate_manufacturer" phx-submit="save_manufacturer">
+        <%#
+        <.input field={@manufacturer_form[:name]} type="text" label="Manufacturer Name" value="Fabulous Labs" />
+        <.input field={@manufacturer_form[:email]} type="email" label="Manufacturer Email" value="max+m1@wardeh.org" />
+        <.input field={@manufacturer_form[:quantity]} type="number" label="Quantity" value="30" />
+        %>
+        <.input field={@manufacturer_form[:name]} type="text" label="Manufacturer Name" />
+        <.input field={@manufacturer_form[:email]} type="email" label="Manufacturer Email" />
+        <.input field={@manufacturer_form[:quantity]} type="number" label="Quantity" />
+        <:actions>
+            <.button phx-disable-with="Saving..." value="add_manufacturer">Add Manufacturer</.button>
+        </:actions>
+    </.simple_form>
+<% end %>
+
+<%= if @step == "manufacturer" && !@add_manufacturer do %>
+    <.button type="reset" phx-click="add_new_manufacturer">Add Another Manufacturer</.button>
+    <.simple_form for={@full_order_form} phx-submit="submit_full_order">
+        <:actions>
+            <.button phx-disable-with="Saving..." value="next">Start Order</.button>
+        </:actions>
+    </.simple_form>
+<% end %>

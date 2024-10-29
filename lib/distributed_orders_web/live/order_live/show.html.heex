@@ -1,0 +1,9 @@
+<.header>
+  Order <%= @order.id %>
+</.header>
+
+<.list>
+  <:item title="Item name"><%= @order.item_name %></:item>
+  <:item title="Documents url"><%= @order.documents_url %></:item>
+  <:item title="Total qty"><%= @order.total_qty %></:item>
+</.list>
