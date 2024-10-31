@@ -1,18 +1,20 @@
-<.header>
+<h2 class="text-3xl text-zinc-500 pb-4">
   New Order
-</.header>
+</h2>
 
 <%= if @order_details_submitted do %>
      <div class="">
+        <h3 class="text-2xl text-zinc-700 pb-4">
+            Item Details
+        </h3>
        <div class="">
          <p>Item Name: <%= @order_changeset.changes.item_name %></p>
        </div>
-       <div class="">
-         <p>Documents URL: <%= @order_changeset.changes.documents_url %></p>
-       </div>
-       <div class="">
-         <p>Total Quantity: <%= @order_changeset.changes.total_qty %></p>
-       </div>
+       <%= if Map.has_key?(@order_changeset.changes, :item_details) do %>
+        <div class="">
+            <p>Details: <%= @order_changeset.changes.item_details %></p>
+        </div>
+       <% end %>
      </div>
 
     <hr class="my-4" />
@@ -20,6 +22,9 @@
 
 <%= if @initiator_submitted do %>
      <div class="">
+        <h3 class="text-2xl text-zinc-700 pb-4">
+            Initiator
+        </h3>
        <div class="">
          <p>Initiator Name: <%= @initiator_changeset.changes.name %></p>
        </div>
@@ -33,6 +38,9 @@
 
 <%= if @quality_inspector_submitted do %>
      <div class="">
+        <h3 class="text-2xl text-zinc-700 pb-4">
+            Quality Inspector
+        </h3>
        <div class="">
          <p>Quality Inspector Name: <%= @quality_inspector_changeset.changes.name %></p>
        </div>
@@ -45,8 +53,10 @@
 <% end %>
 
 <%= if @manufacturers != [] do %>
-    <div class="manufacturers-list">
-        <h2>Manufacturers</h2>
+    <div class="">
+        <h3 class="text-2xl text-zinc-700 pb-4">
+            Manufacturers
+        </h3>
         <ul>
             <%= for manufacturer <- @manufacturers do %>
                 <li>
@@ -61,71 +71,212 @@
 
 
 <%= if @step == "order" do %>
-    <.simple_form for={@order_form} phx-change="validate_order" phx-submit="save_order">
-        <%#
-        <.input field={@order_form[:item_name]} type="text" label="Item name" value="Flange Manifold Gasket" />
-        <.input field={@order_form[:documents_url]} type="text" label="Documents url" value="https://wardeh.com/flange-manifold-gasket" />
-        <.input field={@order_form[:total_qty]} type="number" label="Total qty" value="30" />
-        %>
-        <.input field={@order_form[:item_name]} type="text" label="Item name" />
-        <.input field={@order_form[:documents_url]} type="text" label="Documents url" />
-        <.input field={@order_form[:total_qty]} type="number" label="Total qty" />
-        <:actions>
-            <.button phx-disable-with="Saving...">Save Item Details</.button>
-        </:actions>
-    </.simple_form>
+    <h3 class="text-2xl text-zinc-700 pb-4">
+        Item Details
+    </h3>
+    <div class="grid grid-cols-2 gap-6 text-zinc-800">
+        <div class="">
+            <.simple_form for={@order_form} phx-change="validate_order" phx-submit="save_order">
+                <.input field={@order_form[:item_name]} type="text" label="Item name" />
+                <div class="text-sm text-zinc-500 pb-4">
+                    This is the name by which the item will be identified in all 
+                    communications related to the order.
+                </div>
+                <.input field={@order_form[:total_qty]} type="number" label="Total quantity" />
+                <div class="text-sm text-zinc-500 pb-4">
+                    The total quantity of the item that will be manufactured.
+                </div>
+                <.input field={@order_form[:item_details]} type="textarea" label="Item Description" />
+                <div class="text-sm text-zinc-500 pb-4">
+                    Provide any details of the item that will be needed for fulfilling 
+                    the order. These could include links to design and documentation 
+                    files that will be needed, or links to any specifications or 
+                    standards that need to be complied with for the manufacture or 
+                    quality inspection of the item.
+                </div>
+                <:actions>
+                    <.button phx-disable-with="Saving..." class="mt-4 btn btn-primary">Save Item Details</.button>
+                </:actions>
+            </.simple_form>
+        </div>
+        <div class="">
+            <p class="pb-4 pt-8">
+                Let's start by providing details of the item that you would like to be 
+                manufactured. For the scenario, it is assumed that you have already 
+                obtained all the information about the item including any 
+                specifications, design and documentation files, etc that will be 
+                needed to be shared with the other participants in this distributed 
+                manufacturing process.
+            </p>
+            <p class="pb-2">
+                This assumes that the role of <strong>Specifier</strong> has already 
+                been fulfilled either by yourself or by a third party that you have 
+                hired to provide the necessary information.
+            </p>
+        </div>
+
+        <div class="pt-4 grid place-items-center">
+            <ul class="steps pt-4">
+                <li class="step step-primary">Item Details</li>
+                <li class="step">Initiator</li>
+                <li class="step">Quality Inspector</li>
+                <li class="step">Manufacturers</li>
+            </ul>
+        </div>
+    </div>
+
 <% end %>
 
 <%= if @step == "initiator" do %>
-    <.simple_form for={@initiator_form} phx-change="validate_initiator" phx-submit="save_initiator">
-        <%#
-        <.input field={@initiator_form[:name]} type="text" label="Initiator name" value="Buyer" />
-        <.input field={@initiator_form[:email]} type="email" label="Initiator email" value="max+buyer@wardeh.org" />
-        %>
-        <.input field={@initiator_form[:name]} type="text" label="Initiator name" />
-        <.input field={@initiator_form[:email]} type="email" label="Initiator email" />
-        <:actions>
-            <.button phx-disable-with="Saving...">Save Initiator Details</.button>
-        </:actions>
-    </.simple_form>
+    <h3 class="text-2xl text-zinc-700 pb-4">
+        Initiator
+    </h3>
+    <div class="grid grid-cols-2 gap-6 text-zinc-800">
+        <div class="">
+
+            <.simple_form for={@initiator_form} phx-change="validate_initiator" phx-submit="save_initiator">
+                <.input field={@initiator_form[:name]} type="text" label="Initiator name" />
+                <div class="text-sm text-zinc-500 pb-4">
+                    <p>
+                        This is the name of the person or entity that will be initiating the order.
+                    </p>
+                </div>
+                <.input field={@initiator_form[:email]} type="email" label="Initiator email" />
+                <div class="text-sm text-zinc-500 pb-4">
+                    <p>
+                        This is the email address of the person or entity that will be 
+                        initiating the order.
+                    </p>
+                </div>
+                <:actions>
+                    <.button phx-disable-with="Saving..." class="mt-4 btn btn-primary">Save Initiator Details</.button>
+                </:actions>
+            </.simple_form>
+        </div>
+
+        <div class="">
+
+            <p class="pb-4">
+                In this scenario, you are the initiator of the order. You will be 
+                responsible for providing the necessary information about yourself and 
+                your contact details so that the other participants in this distributed 
+                manufacturing process can receive and send updates to you.
+            </p>
+            <p class="pb-2">
+                These are the roles that the initiator will be undertaking, either 
+                directly or by hiring a third party, in this scenario:
+            </p>
+            <ul class="list-disc ps-4">
+                <li>
+                    Demand side roles
+                    <ul class="list-disc ps-8">
+                        <li>
+                            Buyer: The initiator is the buyer in the scenario.
+                        </li>
+                        <li>
+                            Specifier: The initiator is the specifier, or has already 
+                            fulfilled this role by hiring a third party to provide the 
+                            necessary information before initiating the order.
+                        </li>
+                        <li>
+                            Recipient: The initiator is the recipient of the order.
+                        </li>
+                        <li>
+                            Payer: The initiator is the payer for the order.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Intermediate roles
+                    <ul class="list-disc ps-8">
+                        <li>
+                            Demand and supply matching: The initiator will be responsible 
+                            for matching the demand and supply for the item.
+                        </li>
+                        <li>
+                            Quality inspector: while in this scenario the initiator will be 
+                            hiring a quality inspector to inspect the initial item made 
+                            by each manufacturer before proceeding with the full production 
+                            run, they will also be responsible for carrying out the quality 
+                            inspection of the final batches made by the selected manufacturers.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="pt-4 grid place-items-center">
+            <ul class="steps pt-4">
+                <li class="step step-primary">Item Details</li>
+                <li class="step step-primary">Initiator</li>
+                <li class="step">Quality Inspector</li>
+                <li class="step">Manufacturers</li>
+            </ul>
+        </div>
+    </div>
 <% end %>
 
 <%= if @step == "quality_inspector" do %>
-    <.simple_form for={@quality_inspector_form} phx-change="validate_quality_inspector" phx-submit="save_quality_inspector">
-        <%#
-        <.input field={@quality_inspector_form[:name]} type="text" label="Quality Inspector Name" value="QA Ltd" />
-        <.input field={@quality_inspector_form[:email]} type="email" label="Quality Inspector Email" value="max+qa@wardeh.org" />
-        %>
+    <h3 class="text-2xl text-zinc-700 pb-4">
+        Quality Inspector
+    </h3>
+    <div class="grid grid-cols-2 gap-6 text-zinc-800">
+        <div class="">
+            <.simple_form for={@quality_inspector_form} phx-change="validate_quality_inspector" phx-submit="save_quality_inspector">
         <.input field={@quality_inspector_form[:name]} type="text" label="Quality Inspector Name" />
         <.input field={@quality_inspector_form[:email]} type="email" label="Quality Inspector Email" />
         <:actions>
-            <.button phx-disable-with="Saving...">Save Quality Inspector Details</.button>
-        </:actions>
-    </.simple_form>
+            <.button phx-disable-with="Saving..." class="mt-4 btn btn-primary">Save Quality Inspector Details</.button>
+                </:actions>
+            </.simple_form>
+        </div>
+        <div class="">
+            <p class="pb-4 pt-8">
+                In this scenario, the quality inspector will be 
+                responsible for inspecting the initial item made by each manufacturer 
+                before proceeding with the full production run.
+            </p>
+        </div>
+    </div>
+    <div class="pt-4 grid place-items-center">
+        <ul class="steps pt-4">
+            <li class="step step-primary">Item Details</li>
+            <li class="step step-primary">Initiator</li>
+            <li class="step step-primary">Quality Inspector</li>
+            <li class="step">Manufacturers</li>
+        </ul>
+    </div>
 <% end %>
 
 <%= if @step == "manufacturer" && @add_manufacturer do %>
+    <h3 class="text-xl text-zinc-700 py-4">
+        Add Manufacturer
+    </h3>
     <%= @order_changeset.changes.total_qty - @quantity_assigned %> items to be assigned for manufacture
     <.simple_form for={@manufacturer_form} phx-change="validate_manufacturer" phx-submit="save_manufacturer">
-        <%#
-        <.input field={@manufacturer_form[:name]} type="text" label="Manufacturer Name" value="Fabulous Labs" />
-        <.input field={@manufacturer_form[:email]} type="email" label="Manufacturer Email" value="max+m1@wardeh.org" />
-        <.input field={@manufacturer_form[:quantity]} type="number" label="Quantity" value="30" />
-        %>
         <.input field={@manufacturer_form[:name]} type="text" label="Manufacturer Name" />
         <.input field={@manufacturer_form[:email]} type="email" label="Manufacturer Email" />
         <.input field={@manufacturer_form[:quantity]} type="number" label="Quantity" />
         <:actions>
-            <.button phx-disable-with="Saving..." value="add_manufacturer">Add Manufacturer</.button>
+            <.button phx-disable-with="Saving..." value="add_manufacturer" class="mt-4 btn btn-primary">Add Manufacturer</.button>
         </:actions>
     </.simple_form>
+    <div class="pt-4 grid place-items-center">
+        <ul class="steps pt-4">
+            <li class="step step-primary">Item Details</li>
+            <li class="step step-primary">Initiator</li>
+            <li class="step step-primary">Quality Inspector</li>
+            <li class="step step-primary">Manufacturers</li>
+        </ul>
+    </div>
+
 <% end %>
 
 <%= if @step == "manufacturer" && !@add_manufacturer do %>
-    <.button type="reset" phx-click="add_new_manufacturer">Add Another Manufacturer</.button>
+    <.button type="reset"phx-click="add_new_manufacturer" class="mt-4 btn btn-primary">Add Another Manufacturer</.button>
     <.simple_form for={@full_order_form} phx-submit="submit_full_order">
         <:actions>
-            <.button phx-disable-with="Saving..." value="next">Start Order</.button>
+            <.button phx-disable-with="Saving..." value="next" class="mt-4 btn btn-primary">Start Order</.button>
         </:actions>
     </.simple_form>
 <% end %>
