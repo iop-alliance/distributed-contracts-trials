@@ -102,6 +102,10 @@ defmodule DistributedOrders.Orders do
     Order.changeset(order, attrs)
   end
 
+  def change_order_form(%Order{} = order, attrs \\ %{}) do
+    Order.form_changeset(order, attrs)
+  end
+
   def change_initiator(%Initiator{} = initiator, attrs \\ %{}) do
     Initiator.changeset(initiator, attrs)
   end
@@ -161,7 +165,7 @@ defmodule DistributedOrders.Orders do
     results = for manufacturer <- order_details.manufacturers do
       req_body = %{
         product_name: order_details.item_name,
-        product_url: order_details.documents_url,
+        product_url: order_details.item_details,
         initiator_name: order_details.initiator.name,
         initiator_email: order_details.initiator.email,
         qi_name: order_details.quality_inspector.name,

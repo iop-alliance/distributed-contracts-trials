@@ -27,7 +27,7 @@ defmodule DistributedOrdersWeb.OrderLive.New do
      |> assign(step: "order")
      |> assign(manufacturers: manufacturers)
      |> assign_new(:order_form, fn ->
-       to_form(Orders.change_order(order))
+       to_form(Orders.change_order_form(order))
      end)
      |> assign_new(:initiator_form, fn ->
        to_form(Orders.change_initiator(initiator))
@@ -53,7 +53,7 @@ defmodule DistributedOrdersWeb.OrderLive.New do
   def handle_event("save_order", %{"order" => order_params}, socket) do
     changeset =
       %Order{}
-      |> Orders.change_order(order_params)
+      |> Orders.change_order_form(order_params)
       |> Map.put(:action, :insert)
 
     if changeset.valid? do

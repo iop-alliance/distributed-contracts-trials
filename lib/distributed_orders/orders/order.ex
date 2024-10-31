@@ -5,7 +5,7 @@ defmodule DistributedOrders.Orders.Order do
   alias DistributedOrders.Orders.{Initiator, QualityInspector, Manufacturer}
 
   schema "orders" do
-    field :documents_url, :string
+    field :item_details, :string
     field :item_name, :string
     field :total_qty, :integer
 
@@ -19,7 +19,14 @@ defmodule DistributedOrders.Orders.Order do
   @doc false
   def changeset(order, attrs) do
     order
-    |> cast(attrs, [:item_name, :documents_url, :total_qty])
-    |> validate_required([:item_name, :documents_url, :total_qty])
+    |> cast(attrs, [:item_name, :item_details, :total_qty])
+    |> validate_required([:item_name, :total_qty])
+  end
+
+  @doc false
+  def form_changeset(order, attrs) do
+    order
+    |> cast(attrs, [:item_name, :item_details, :total_qty])
+    |> validate_required([:item_name, :total_qty])
   end
 end
