@@ -4,6 +4,61 @@ defmodule DistributedOrdersWeb.OrderLive.New do
   alias DistributedOrders.Orders
   alias DistributedOrders.Orders.{Order, Initiator, QualityInspector, Manufacturer}
 
+  @available_countries [
+    %{
+      country: "Nigeria",
+      currency: "NGN"
+    },
+    %{
+      country: "United State",
+      currency: "US"
+    },
+    %{
+      country: "Europe",
+      currency: "EUR"
+    },
+    %{
+      country: "United Kingdom",
+      currency: "GBP"
+    },
+    %{
+      country: "Ghana",
+      currency: "GHS"
+    },
+    %{
+      country: "Francophone Africa (Central Africa)",
+      currency: "XAF"
+    },
+    %{
+      country: "Francophone Africa (West Africa)",
+      currency: "XOF"
+    },
+    %{
+      country: "South Africa",
+      currency: "ZAR"
+    },
+    %{
+      country: "Malawi",
+      currency: "MWK"
+    },
+    %{
+      country: "Kenya",
+      currency: "KES"
+    },
+    %{
+      country: "Uganda",
+      currency: "UGX"
+    },
+    %{
+      country: "Rwanda",
+      currency: "RWF"
+    },
+    %{
+      country: "Tanzania",
+      currency: "TZS"
+    }
+  ]
+
   @impl true
   def mount(_params, _session, socket) do
     order = %Order{}
@@ -15,6 +70,7 @@ defmodule DistributedOrdersWeb.OrderLive.New do
     {:ok,
      socket
      |> assign(page_title: "New Order")
+     |> assign(available_countries: @available_countries)
      |> assign(order_details_submitted: false)
      |> assign(initiator_submitted: false)
      |> assign(quality_inspector_submitted: false)
@@ -58,10 +114,10 @@ defmodule DistributedOrdersWeb.OrderLive.New do
 
     if changeset.valid? do
       {:noreply,
-      socket
-      |> assign(order_changeset: changeset)
-      |> assign(order_details_submitted: true)
-      |> assign(step: "initiator")}
+       socket
+       |> assign(order_changeset: changeset)
+       |> assign(order_details_submitted: true)
+       |> assign(step: "initiator")}
     else
       {:noreply, assign(socket, order_changeset: changeset)}
     end
@@ -81,33 +137,46 @@ defmodule DistributedOrdersWeb.OrderLive.New do
 
     if changeset.valid? do
       {:noreply,
+       socket
+       |> assign(initiator_changeset: changeset)
+       |> assign(initiator_submitted: true)
+       |> assign(step: "quality_inspector")}
+    else
+      {:noreply, assign(socket, initiator_changeset: changeset)}
+    end
+  end
+
+  def handle_event(
+        "validate_quality_inspector",
+        %{"quality_inspector" => quality_inspector_params},
         socket
-        |> assign(initiator_changeset: changeset)
-        |> assign(initiator_submitted: true)
-        |> assign(step: "quality_inspector")}
-      else
-        {:noreply, assign(socket, initiator_changeset: changeset)}
-      end
-    end
+      ) do
+    changeset =
+      Orders.change_quality_inspector_form(
+        socket.assigns.quality_inspector,
+        quality_inspector_params
+      )
 
-    def handle_event("validate_quality_inspector", %{"quality_inspector" => quality_inspector_params}, socket) do
-      changeset = Orders.change_quality_inspector_form(socket.assigns.quality_inspector, quality_inspector_params)
-      {:noreply, assign(socket, quality_inspector_form: to_form(changeset, action: :validate))}
-    end
+    {:noreply, assign(socket, quality_inspector_form: to_form(changeset, action: :validate))}
+  end
 
-    def handle_event("save_quality_inspector", %{"quality_inspector" => quality_inspector_params}, socket) do
-      changeset =
-        %QualityInspector{}
-        |> Orders.change_quality_inspector_form(quality_inspector_params)
-        |> Map.put(:action, :insert)
+  def handle_event(
+        "save_quality_inspector",
+        %{"quality_inspector" => quality_inspector_params},
+        socket
+      ) do
+    changeset =
+      %QualityInspector{}
+      |> Orders.change_quality_inspector_form(quality_inspector_params)
+      |> Map.put(:action, :insert)
 
-        if changeset.valid? do
-          {:noreply,
-          socket
-          |> assign(quality_inspector_changeset: changeset)
-          |> assign(quality_inspector_submitted: true)
-          |> assign(add_manufacturer: true)
-          |> assign(step: "manufacturer")}
+    if changeset.valid? do
+      {:noreply,
+       socket
+       |> assign(quality_inspector_changeset: changeset)
+       |> assign(quality_inspector_submitted: true)
+       |> assign(add_manufacturer: true)
+       |> assign(step: "manufacturer")}
     else
       {:noreply, assign(socket, quality_inspector_changeset: changeset)}
     end
@@ -126,12 +195,16 @@ defmodule DistributedOrdersWeb.OrderLive.New do
 
     if changeset.valid? do
       manufacturers = socket.assigns.manufacturers ++ [changeset]
+
       {:noreply,
-          socket
-          |> assign(manufacturer_changeset: changeset)
-          |> assign(manufacturers: manufacturers)
-          |> assign(add_manufacturer: false)
-          |> assign(quantity_assigned: socket.assigns.quantity_assigned + String.to_integer(manufacturer_params["quantity"]))}
+       socket
+       |> assign(manufacturer_changeset: changeset)
+       |> assign(manufacturers: manufacturers)
+       |> assign(add_manufacturer: false)
+       |> assign(
+         quantity_assigned:
+           socket.assigns.quantity_assigned + String.to_integer(manufacturer_params["quantity"])
+       )}
     else
       {:noreply, assign(socket, manufacturer_changeset: changeset)}
     end
@@ -139,9 +212,10 @@ defmodule DistributedOrdersWeb.OrderLive.New do
 
   def handle_event("add_new_manufacturer", _params, socket) do
     {:noreply,
-    socket
-    |> assign(add_manufacturer: true)
-    |> assign(:manufacturer_form, to_form(Orders.change_manufacturer_form(%Manufacturer{})))}
+     socket
+     |> assign(add_manufacturer: true)
+     |> assign(:manufacturer_form, to_form(Orders.change_manufacturer_form(%Manufacturer{})))
+    }
   end
 
   def handle_event("submit_full_order", _params, socket) do
@@ -155,10 +229,12 @@ defmodule DistributedOrdersWeb.OrderLive.New do
       {:ok, order} ->
         results = Orders.start_order_process(order)
         IO.inspect(results)
+
         {:noreply,
          socket
          |> put_flash(:info, "Order created successfully.")
          |> redirect(to: ~p"/orders/#{order.id}")}
+
       {:error, changeset} ->
         {:noreply, assign(socket, order_changeset: changeset)}
     end

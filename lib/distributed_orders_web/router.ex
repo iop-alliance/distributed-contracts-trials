@@ -15,6 +15,12 @@ defmodule DistributedOrdersWeb.Router do
   end
 
   scope "/", DistributedOrdersWeb do
+    pipe_through :api
+
+    post "/payment", PaymentController, :payment
+  end
+
+  scope "/", DistributedOrdersWeb do
     pipe_through :browser
 
     get "/about", PageController, :about

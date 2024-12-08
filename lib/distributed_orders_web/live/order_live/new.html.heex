@@ -257,6 +257,11 @@
         <.input field={@manufacturer_form[:name]} type="text" label="Manufacturer Name" />
         <.input field={@manufacturer_form[:email]} type="email" label="Manufacturer Email" />
         <.input field={@manufacturer_form[:quantity]} type="number" label="Quantity" />
+        <h3 class="text-xl text-zinc-700 py-4">
+            Payment Details
+        </h3>
+        <.input field={@manufacturer_form[:amount]} type="number" label="Amount" />
+        <.input field={@manufacturer_form[:currency]} type="select" label="Currency" prompt="Select a Currency" options={Enum.map(@available_countries, & &1.currency)} />
         <:actions>
             <.button phx-disable-with="Saving..." value="add_manufacturer" class="mt-4 btn btn-primary">Add Manufacturer</.button>
         </:actions>
