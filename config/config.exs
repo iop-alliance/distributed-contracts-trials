@@ -53,6 +53,9 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+config :distributed_orders, :flutterwave,
+  secret_key: "FLWSECK_TEST-5de761b52336e2465258f994d247e9e1-X"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

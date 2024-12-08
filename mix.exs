@@ -59,7 +59,8 @@ defmodule DistributedOrders.MixProject do
       {:jason, "~> 1.4"},
       {:dns_cluster, "~> 0.1.1"},
       {:req, "~> 0.5.0"},
-      {:bandit, "~> 1.5"}
+      {:bandit, "~> 1.5"},
+      {:tesla, "~> 1.13"}
     ]
   end
 
