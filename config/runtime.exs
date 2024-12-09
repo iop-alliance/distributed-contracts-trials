@@ -65,6 +65,7 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  config :distributed_orders, :flutterwave, System.get_env("FLUTTER_WAVE_SECRET_KEY")
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key
