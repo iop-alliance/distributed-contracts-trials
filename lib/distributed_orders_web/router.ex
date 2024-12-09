@@ -14,7 +14,7 @@ defmodule DistributedOrdersWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", DistributedOrdersWeb do
+  scope "/api", DistributedOrdersWeb do
     pipe_through :api
 
     post "/payment", PaymentController, :payment

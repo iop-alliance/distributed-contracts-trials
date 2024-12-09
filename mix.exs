@@ -60,7 +60,8 @@ defmodule DistributedOrders.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:req, "~> 0.5.0"},
       {:bandit, "~> 1.5"},
-      {:tesla, "~> 1.13"}
+      {:tesla, "~> 1.13"},
+      {:uuid, "~> 1.1"}
     ]
   end
 
