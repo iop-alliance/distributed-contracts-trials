@@ -15,7 +15,7 @@ defmodule DistributedOrders.ApiClient.Flutterwave do
   def transfer_money(params) do
     params =
       Map.merge(params, %{
-        "tx_ref" => "unique-ref1" <> UUID.uuid4(),
+        "tx_ref" => "unique-ref" <> UUID.uuid4(),
         "amount" => Integer.to_string(params["amount"])
       })
 
