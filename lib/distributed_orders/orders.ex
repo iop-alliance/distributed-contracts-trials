@@ -122,6 +122,10 @@ defmodule DistributedOrders.Orders do
     Manufacturer.changeset(manufacturer, attrs)
   end
 
+  def get_manufacturer(manufacturer_id) do
+    Repo.get!(Manufacturer, manufacturer_id)
+  end
+
   def change_manufacturer_form(%Manufacturer{} = manufacturer, attrs \\ %{}) do
     Manufacturer.form_changeset(manufacturer, attrs)
   end
@@ -172,7 +176,9 @@ defmodule DistributedOrders.Orders do
         manufacturer_id: manufacturer.id,
         manufacturer_name: manufacturer.name,
         manufacturer_email: manufacturer.email,
-        amount: manufacturer.amount,
+        payment_amount_1: manufacturer.payment_amount_1,
+        payment_amount_2: manufacturer.payment_amount_2,
+        payment_amount_3: manufacturer.payment_amount_3,
         currency: manufacturer.currency,
         quantity: manufacturer.quantity
       }

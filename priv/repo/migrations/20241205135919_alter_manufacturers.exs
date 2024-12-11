@@ -3,7 +3,9 @@ defmodule DistributedOrders.Repo.Migrations.AlterManufacturers do
 
   def change do
     alter table(:manufacturers) do
-      add :amount, :integer
+      add :payment_amount_1, :integer
+      add :payment_amount_2, :integer
+      add :payment_amount_3, :integer
       add :currency, :string
     end
   end
