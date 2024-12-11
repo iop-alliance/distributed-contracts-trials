@@ -8,7 +8,7 @@ defmodule DistributedOrdersWeb.PaymentController do
     amount = get_payment_amount(params["payment_no"], manufacturer)
 
     params = %{
-      "tx_ref" => "ref_#{manufacturer.id}",
+      "tx_ref" => "ref" <> UUID.uuid4(),
       "currency" => manufacturer.currency,
       "amount" => Integer.to_string(amount),
       "customer" => %{
