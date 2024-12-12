@@ -6,6 +6,10 @@ defmodule DistributedOrders.Orders.Manufacturer do
     field :email, :string
     field :name, :string
     field :quantity, :integer
+    field :payment_amount_1, :integer
+    field :payment_amount_2, :integer
+    field :payment_amount_3, :integer
+    field :currency, :string
 
     belongs_to :order, DistributedOrders.Orders.Order
 
@@ -13,16 +17,16 @@ defmodule DistributedOrders.Orders.Manufacturer do
   end
 
   @doc false
-  def changeset(manufacturer, attrs) do
+  def changeset(manufacturer, attrs \\ %{}) do
     manufacturer
-    |> cast(attrs, [:name, :email, :quantity, :order_id])
-    |> validate_required([:name, :email, :quantity, :order_id])
+    |> cast(attrs, [:name, :email, :quantity, :payment_amount_1, :payment_amount_2, :payment_amount_3, :currency, :order_id])
+    |> validate_required([:name, :email, :quantity, :payment_amount_1, :payment_amount_2, :payment_amount_3, :currency, :order_id])
     |> foreign_key_constraint(:order_id)
   end
 
-  def form_changeset(manufacturer, attrs) do
+  def form_changeset(manufacturer, attrs \\ %{}) do
     manufacturer
-    |> cast(attrs, [:name, :email, :quantity])
-    |> validate_required([:name, :email, :quantity])
+    |> cast(attrs, [:name, :email, :quantity, :payment_amount_1, :payment_amount_2, :payment_amount_3, :currency])
+    |> validate_required([:name, :email, :quantity, :payment_amount_1, :payment_amount_2, :payment_amount_3, :currency])
   end
 end

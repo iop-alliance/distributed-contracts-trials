@@ -122,6 +122,10 @@ defmodule DistributedOrders.Orders do
     Manufacturer.changeset(manufacturer, attrs)
   end
 
+  def get_manufacturer(manufacturer_id) do
+    Repo.get!(Manufacturer, manufacturer_id)
+  end
+
   def change_manufacturer_form(%Manufacturer{} = manufacturer, attrs \\ %{}) do
     Manufacturer.form_changeset(manufacturer, attrs)
   end
@@ -137,13 +141,12 @@ defmodule DistributedOrders.Orders do
       Ecto.Changeset.put_assoc(quality_inspector_changeset, :order, order)
     end)
     |> Ecto.Multi.insert_all(:manufacturers, Manufacturer, fn %{order: order} ->
-        insert_manufacturers(manufacturer_changesets, order.id)
-    end)
+      insert_manufacturers(manufacturer_changesets, order.id)
+  end)
     |> Repo.transaction()
     |> case do
       {:ok, %{order: order}} -> {:ok, order}
       {:error, _, changeset, _} ->
-        IO.inspect(changeset)
         {:error, changeset}
     end
   end
@@ -161,7 +164,7 @@ defmodule DistributedOrders.Orders do
 
   def start_order_process(order) do
     order_details = Repo.get!(Order, order.id) |> Repo.preload([:initiator, :quality_inspector, :manufacturers])
-    req_url = "https://cloud.activepieces.com/api/v1/webhooks/rTY85oBAtl7iHdrf1nsA6"
+    req_url = "https://cloud.activepieces.com/api/v1/webhooks/KVYuTaKpSYODBlXNTnZGX"
     results = for manufacturer <- order_details.manufacturers do
       req_body = %{
         product_name: order_details.item_name,
@@ -170,10 +173,16 @@ defmodule DistributedOrders.Orders do
         initiator_email: order_details.initiator.email,
         qi_name: order_details.quality_inspector.name,
         qi_email: order_details.quality_inspector.email,
+        manufacturer_id: manufacturer.id,
         manufacturer_name: manufacturer.name,
         manufacturer_email: manufacturer.email,
+        payment_amount_1: manufacturer.payment_amount_1,
+        payment_amount_2: manufacturer.payment_amount_2,
+        payment_amount_3: manufacturer.payment_amount_3,
+        currency: manufacturer.currency,
         quantity: manufacturer.quantity
       }
+
       case Req.post!(req_url, json: req_body) do
         %{status: 200} -> {manufacturer.name, :ok}
         %{status: 400} -> {manufacturer.name, :error}
